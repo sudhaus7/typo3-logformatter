@@ -330,7 +330,7 @@ class LogformatterCommand extends Command {
 					$meta = [];
 					$stacktrace = [];
 
-					/** @var (string|mixed)[] $json */
+					/** @var (string|array)[] $json */
 					$json = json_decode( $matches['json'], true );
 					if ( $json ) {
 						foreach ( $json as $key => $line ) {
@@ -365,9 +365,7 @@ class LogformatterCommand extends Command {
 								if ( $this->input->getOption( 'show-meta' ) ) {
 									if (is_array($line)) {
 										$meta[] = [$key,print_r($line,true)];
-									} else if ( is_object( $line)) {
-										$meta[] = [$key,print_r($line,true)];
-									} else {
+									}  else {
 										$meta[] = [$key,$line];
 									}
 
