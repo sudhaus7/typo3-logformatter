@@ -83,7 +83,7 @@ class LogformatterCommand extends Command {
 		FormatInterface $filelinkFormat = null
 	) {
 		if (!$pattern instanceof PatternInterface) {
-			/** @var Typo3LogPattern $pattern */
+			/** @var PatternInterface $pattern */
 			$pattern = GeneralUtility::makeInstance( Typo3LogPattern::class);
 		}
 		if (!$format instanceof FormatInterface) {
@@ -91,13 +91,53 @@ class LogformatterCommand extends Command {
 			$format = GeneralUtility::makeInstance( LineFormat::class);
 		}
 		if (!$stacktracePattern instanceof PatternInterface) {
-			/** @var Typo3LogPattern $stacktracePattern */
+			/** @var PatternInterface $stacktracePattern */
 			$stacktracePattern = GeneralUtility::makeInstance( StacktracePattern::class);
 		}
 		if (!$filelinkFormat instanceof FormatInterface) {
 			/** @var FormatInterface $filelinkFormat */
 			$filelinkFormat = GeneralUtility::makeInstance( FilelinkFormat::class);
 		}
+
+		/**
+		 * @psalm-suppress MixedArrayAccess
+		 */
+		if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
+
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'])) {
+				/** @var string $className */
+				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'];
+				if (class_exists($className) && is_array(class_implements($className)) && in_array(FormatInterface::class,class_implements($className))) {
+					/** @var FormatInterface $format */
+					$format = GeneralUtility::makeInstance( $className );
+				}
+			}
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'])) {
+				/** @var string $className */
+				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'];
+				if (class_exists($className) && is_array(class_implements($className)) && in_array(FormatInterface::class,class_implements($className))) {
+					/** @var FormatInterface $filelinkFormat */
+					$filelinkFormat = GeneralUtility::makeInstance( $className );
+				}
+			}
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
+				/** @var string $className */
+				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
+				if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class,class_implements($className))) {
+					/** @var PatternInterface $stacktracePattern */
+					$stacktracePattern = GeneralUtility::makeInstance( $className );
+				}
+			}
+			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'])) {
+				/** @var string $className */
+				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
+				if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class,class_implements($className))) {
+					/** @var PatternInterface $pattern */
+					$pattern = GeneralUtility::makeInstance( $className );
+				}
+			}
+		}
+
 		$this->pattern = $pattern;
 		$this->format = $format;
 		$this->stacktracePattern = $stacktracePattern;
@@ -110,9 +150,9 @@ class LogformatterCommand extends Command {
 	 */
 	protected function configure() : void
 	{
-		$this->setDescription('Tool to pretty print and Format Logfile lines');
-		$this->setHelp($this->getDescription());
-		$this->addArgument('file', InputArgument::OPTIONAL, 'Filename or - for STDIN');
+		$this->setDescription('Tool to pretty print and format Logfile entries');
+
+		$this->addArgument('file', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Filename or - for STDIN');
 
 		$this->addOption( 'search',null,InputOption::VALUE_REQUIRED,'Search in message for this keyword');
 
@@ -127,10 +167,56 @@ class LogformatterCommand extends Command {
 
 		$this->addOption( 'hide-vendor',null,InputOption::VALUE_NONE,'Hide vendor paths in stacktrace, implies --show-stacktrace');
 
-		$this->addOption( 'pager',null,InputOption::VALUE_NONE,'paging');
+		$this->addOption( 'pager',null,InputOption::VALUE_NONE,'(EXPERIMENTAL) paging');
 		$this->addOption( 'ignore-file-pattern',null,InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,'Logfile filename patterns to ignore (Default '.implode(',',self::$IGNORE_PATTERNS).')');
 
 		// date from / to
+
+		$this->setHelp('
+ Parse, search, format and display TYPO3 Logfiles.
+ 
+ It is possible to combine parameters. By default only the logline will be shown, the meta information and stacktrace will be hidden. Keywords can be searched and the output can be filtered by request, level and component.
+ 
+ Usage:
+ 
+ This will display all logs which are located in var/logs/
+ ./vendor/bin/typo3 logformatter
+ 
+ In this example the output will be filtered according to a certain request ID 
+ ./vendor/bin/typo3 logformatter --request=928d81f2d604e
+ 
+ In this example the output will be filtered according to a certain component 
+ ./vendor/bin/typo3 logformatter --component=TYPO3.CMS.Core.Error.ErrorHandler
+ 
+ Filtering the output by error level
+ ./vendor/bin/typo3 logformatter --level=WARNING
+ 
+ Searching for a keyword, for example an Oops error code
+ ./vendor/bin/typo3 logformatter --search=2021110100165236c2ab3f
+ 
+ Displaying meta information given to the log by the process (will displayed in a table)
+ ./vendor/bin/typo3 logformatter --show-meta
+ ./vendor/bin/typo3 logformatter -m
+ 
+ Displaying the stack-trace in an expanded, readable form (one line per stack)
+ ./vendor/bin/typo3 logformatter --show-stacktrace
+ ./vendor/bin/typo3 logformatter -s
+ 
+ Skipping stacks pointing to /vendor in the stacktrace to shorten it
+ ./vendor/bin/typo3 logformatter --show-stacktrace --hide-vendor
+ 
+ Don\'t parse logfiles matching a certain file pattern (multiple)
+ ./vendor/bin/typo3 logformatter --ignore-file-pattern="*def.log"
+ 
+ Parsing a specific file
+ ./vendor/bin/typo3 logformatter var/log/typo3_0fb8cbec8e.log
+ 
+ Using stdin as input
+ tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -  
+ 
+		');
+
+
 
 	}
 
@@ -159,32 +245,36 @@ class LogformatterCommand extends Command {
 			$this->resetTTY();
 		}
 
-		$file = (string)$input->getArgument( 'file');
-		if ($file === '-') {
-			$file = 'php://stdin';
+		/** @var string[] $files */
+		$files = $input->getArgument( 'file');
+
+		if (in_array('-',$files)) {
 			$this->pager = false;
-			$this->handleFile( $file );
+			$this->handleFile( 'php://stdin' );
 		} else {
 			/** @var Finder $finder */
 			$finder = GeneralUtility::makeInstance( Finder::class);
-			if(!empty($file)) {
-				$filename = basename( $file);
-				$directory = dirname($file);
-			} else {
-				$filename = '*.log';
-				$directory = Environment::getVarPath().'/log/';
-			}
-			$finder->name($filename);
-			$finder->notName( $ignorePatterns);
 
-			/**
-			 * @psalm-suppress MixedAssignment
-			 */
-			foreach($finder->in($directory) as $thefile) {
+			if (empty($files)) {
+				$files = [Environment::getVarPath() . '/log/*.log'];
+			}
+			foreach ($files as $file) {
+
+				$filename  = basename( $file );
+				$directory = dirname( $file );
+
+				$finder->name( $filename );
+				$finder->notName( $ignorePatterns );
+
 				/**
-				 * @psalm-suppress MixedMethodCall
+				 * @psalm-suppress MixedAssignment
 				 */
-				$this->handleFile( (string)$thefile->getRealPath() );
+				foreach ( $finder->in( $directory ) as $thefile ) {
+					/**
+					 * @psalm-suppress MixedMethodCall
+					 */
+					$this->handleFile( (string) $thefile->getRealPath() );
+				}
 			}
 		}
 		return 0;
