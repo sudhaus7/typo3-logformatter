@@ -11,6 +11,7 @@
         <ignoreFiles>
             <directory name="vendor" />
             <directory name=".Build" />
+            <file name=".Build/public/typo3/sysext/core/Classes/Utility/GeneralUtility.php"/>
         </ignoreFiles>
     </projectFiles>
 </psalm>
