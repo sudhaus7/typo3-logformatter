@@ -11,7 +11,7 @@ class LineFormat implements FormatInterface {
 	/**
 	 * @var string
 	 */
-	protected $format = '<options=bold,underscore>%s</> <alertlevel>%s</> request=<info>%s</> component=<component>%s</>';
+	protected $format = '<options=bold,underscore>%s</> <alertlevel>%s</> request=<request>%s</> component=<component>%s</>';
 
 	/**
 	 * @inheritDoc
@@ -36,6 +36,11 @@ class LineFormat implements FormatInterface {
 			$output->getFormatter()->getStyle( 'component' );
 		} catch ( InvalidArgumentException $e) {
 			$output->getFormatter()->setStyle('component', new OutputFormatterStyle('blue','white'));
+		}
+		try {
+			$output->getFormatter()->getStyle( 'request' );
+		} catch ( InvalidArgumentException $e) {
+			$output->getFormatter()->setStyle('request', new OutputFormatterStyle('black','white'));
 		}
 		try {
 			$output->getFormatter()->getStyle( 'alertlevel' );

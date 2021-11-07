@@ -128,7 +128,7 @@ class LogformatterCommand extends Command {
 		$this->addOption( 'hide-vendor',null,InputOption::VALUE_NONE,'Hide vendor paths in stacktrace, implies --show-stacktrace');
 
 		$this->addOption( 'pager',null,InputOption::VALUE_NONE,'paging');
-		$this->addOption( 'ignore-file-pattern',null,InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,'Filename parts to ignore (Default '.implode(',',self::$IGNORE_PATTERNS).')');
+		$this->addOption( 'ignore-file-pattern',null,InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,'Logfile filename patterns to ignore (Default '.implode(',',self::$IGNORE_PATTERNS).')');
 
 		// date from / to
 
@@ -147,8 +147,6 @@ class LogformatterCommand extends Command {
 
 		$this->format->configOutput($output);
 		$this->filelinkFormat->configOutput($output);
-
-
 
 		/**
 		 * @var string[]

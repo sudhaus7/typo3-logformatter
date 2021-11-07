@@ -3,18 +3,18 @@
     "description": "A CLI tool to format and search TYPO3 Logfiles",
     "type": "typo3-cms-extension",
     "require": {
-        "php": "7.2.*||7.3.*||7.4.*||8.0.*||8.1.*"
+        "php": "7.2.*||7.3.*||7.4.*||8.0.*||8.1.*",
+        "typo3/cms-core": "9.5.*||10.4.*||11.5.*"
     },
     "require-dev": {
-        "typo3/cms-core": "^9.5",
-        "typo3/cms-backend": "^9.5",
-        "typo3/cms-frontend": "^9.5",
-        "typo3/cms-tstemplate": "^9.5",
-        "typo3/cms-install": "^9.5",
+        "typo3/cms-backend": "^11.5",
+        "typo3/cms-frontend": "^11.5",
+        "typo3/cms-tstemplate": "^11.5",
+        "typo3/cms-install": "^11.5",
         "friendsoftypo3/phpstan-typo3": "^0.8.1",
         "vimeo/psalm": "^4.10",
-        "typo3/cms-lowlevel": "^9.5",
-        "helhum/typo3-console": "^5"
+        "typo3/cms-lowlevel": "^11.5",
+        "helhum/typo3-console": "*"
     },
     "license": "MIT",
     "autoload": {
