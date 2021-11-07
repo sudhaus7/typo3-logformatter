@@ -81,7 +81,7 @@ Help:
 
 ## Example output
 
-![Example]()
+![Example](https://raw.githubusercontent.com/sudhaus7/typo3-logformatter/main/.github/example.png)
 
 ## Using with PHPStorm
 While PHPStorm will open the file when you click on the filename in a stacktrace, it will not jump to the line. This can be achieved by injecting a different formatter for the file-link. 
