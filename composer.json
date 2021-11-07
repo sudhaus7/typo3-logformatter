@@ -1,0 +1,47 @@
+{
+    "name": "sudhaus7/logformatter",
+    "description": "A CLI tool to format and search TYPO3 Logfiles",
+    "type": "typo3-cms-extension",
+    "require": {
+        "symfony/finder": "^5.3"
+    },
+    "require-dev": {
+        "typo3/cms-core": "^11.5",
+        "typo3/cms-backend": "^11.5",
+        "typo3/cms-frontend": "^11.5",
+        "typo3/cms-tstemplate": "^11.5",
+        "typo3/cms-install": "^11.5",
+        "friendsoftypo3/phpstan-typo3": "^0.8.1",
+        "vimeo/psalm": "^4.10",
+        "typo3/cms-lowlevel": "^11.5",
+        "helhum/typo3-console": "^7.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SUDHAUS7\\Logformatter\\": "Classes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Frank Berger",
+            "email": "fberger@sudhaus7.de"
+        }
+    ],
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "logformatter",
+            "cms-package-dir": "{$vendor-dir}/typo3/cms",
+            "web-dir": ".Build/public"
+        }
+    },
+    "scripts": {
+        "pre-autoload-dump": [
+            "[ -L .Build/public/typo3conf/ext/logformatter ] && rm .Build/public/typo3conf/ext/logformatter"
+        ],
+        "post-autoload-dump": [
+            "mkdir -p .Build/public/typo3conf/ext/",
+            "[ -L .Build/public/typo3conf/ext/logformatter ] || ln -snvf ../../../../. .Build/public/typo3conf/ext/logformatter"
+        ]
+    }
+}

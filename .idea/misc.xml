@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectResources">
+    <resource url="http://typo3.org/ns/TYPO3/Neos/ViewHelpers" location="$USER_HOME$/Schemas/NEOSSchemas/Neos.xsd" />
+    <resource url="http://typo3.org/ns/TYPO3/TypoScript/ViewHelpers" location="$USER_HOME$/Schemas/NEOSSchemas/TypoScript.xsd" />
+    <resource url="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" location="$USER_HOME$/Schemas/NEOSSchemas/Fluid.xsd" />
+    <resource url="http://typo3.org/ns/TYPO3/Twitter/Bootstrap/ViewHelpers" location="$USER_HOME$/Schemas/NEOSSchemas/Bootstrap.xsd" />
+    <resource url="http://typo3.org/ns/TYPO3/Media/ViewHelpers" location="$USER_HOME$/Schemas/NEOSSchemas/Media.xsd" />
+  </component>
+</project>
