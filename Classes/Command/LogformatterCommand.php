@@ -22,6 +22,7 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
 use function basename;
+use function is_object;
 use function is_resource;
 
 class LogformatterCommand extends Command {
@@ -329,12 +330,13 @@ class LogformatterCommand extends Command {
 					$meta = [];
 					$stacktrace = [];
 
-					/** @var (string|string)[] $json */
+					/** @var (string|mixed)[] $json */
 					$json = json_decode( $matches['json'], true );
 					if ( $json ) {
 						foreach ( $json as $key => $line ) {
 							if ( $key === 'exception') {
 								if ($this->input->getOption( 'show-stacktrace' )) {
+									/** @var string $line */
 									$exceptionlines = explode( "\n", $line );
 									foreach ( $exceptionlines as $exline ) {
 										if ( substr( $exline, 0, 1 ) === '#' ) {
@@ -361,7 +363,15 @@ class LogformatterCommand extends Command {
 
 							} else {
 								if ( $this->input->getOption( 'show-meta' ) ) {
-									$meta[] = [$key,$line];
+									if (is_array($line)) {
+										$meta[] = [$key,print_r($line,true)];
+									} else if ( is_object( $line)) {
+										$meta[] = [$key,print_r($line,true)];
+									} else {
+										$meta[] = [$key,$line];
+									}
+
+
 								}
 							}
 						}
