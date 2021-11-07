@@ -19,7 +19,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "SUDHAUS7\\Logformatter\\": "Classes/"
+            "Sudhaus7\\Logformatter\\": "Classes/"
         }
     },
     "authors": [
@@ -37,6 +37,7 @@
     },
     "scripts": {
         "pre-autoload-dump": [
+            "mkdir -p .Build/public/typo3conf/ext/",
             "[ -L .Build/public/typo3conf/ext/logformatter ] && rm .Build/public/typo3conf/ext/logformatter"
         ],
         "post-autoload-dump": [
