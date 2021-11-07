@@ -2,6 +2,8 @@
 
 namespace Sudhaus7\Logformatter\Format;
 
+use InvalidArgumentException;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class LineFormat implements FormatInterface {
@@ -9,7 +11,7 @@ class LineFormat implements FormatInterface {
 	/**
 	 * @var string
 	 */
-	protected $format = '<options=bold,underscore>%s</> <fg=bright-white;bg=red>%s</> request=<info>%s</> component=<fg=bright-blue>%s</>';
+	protected $format = '<options=bold,underscore>%s</> <alertlevel>%s</> request=<info>%s</> component=<component>%s</>';
 
 	/**
 	 * @inheritDoc
@@ -30,6 +32,15 @@ class LineFormat implements FormatInterface {
 	 * @inheritDoc
 	 */
 	public function configOutput( OutputInterface $output ): void {
-
+		try {
+			$output->getFormatter()->getStyle( 'component' );
+		} catch ( InvalidArgumentException $e) {
+			$output->getFormatter()->setStyle('component', new OutputFormatterStyle('blue','white'));
+		}
+		try {
+			$output->getFormatter()->getStyle( 'alertlevel' );
+		} catch ( InvalidArgumentException $e) {
+			$output->getFormatter()->setStyle('alertlevel', new OutputFormatterStyle('white','red'));
+		}
 	}
 }

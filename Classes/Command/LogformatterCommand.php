@@ -145,6 +145,11 @@ class LogformatterCommand extends Command {
 		$this->input = $input;
 		$this->output = $output;
 
+		$this->format->configOutput($output);
+		$this->filelinkFormat->configOutput($output);
+
+
+
 		/**
 		 * @var string[]
 		 * @psalm-suppress MixedArgument
