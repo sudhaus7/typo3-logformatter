@@ -1,0 +1,21 @@
+services:
+  _defaults:
+    autowire: false
+    autoconfigure: true
+    public: false
+
+  Sudhaus7\Logformatter\:
+    resource: '../Classes/*'
+
+  Sudhaus7\Logformatter\Command\LogformatterCommand:
+    arguments:
+      $name: logformatter
+      $pattern: '@Sudhaus7\Logformatter\Pattern\Typo3LogPattern'
+      $format: '@Sudhaus7\Logformatter\Format\LineFormat'
+      $stacktracePattern: '@Sudhaus7\Logformatter\Pattern\StacktracePattern'
+      $filelinkFormat: '@Sudhaus7\Logformatter\Format\FilelinkFormat'
+    tags:
+      - name: 'console.command'
+        command: 'logformatter'
+        description: 'Formats TYPO3 Logfiles'
+        schedulable: false
