@@ -163,6 +163,8 @@ class LogformatterCommand extends Command {
 
 		$this->addOption( 'level',null,InputOption::VALUE_REQUIRED,'show only this error level');
 
+		$this->addOption( 'max-buffer',null,InputOption::VALUE_OPTIONAL,'use this max buffer size in bytes for each line (default: 16384)');
+
 		$this->addOption( 'show-meta','m',InputOption::VALUE_NONE,'Show additional information / meta information');
 		$this->addOption( 'show-stacktrace','s',InputOption::VALUE_NONE,'Show the stacktrace');
 
@@ -214,6 +216,9 @@ class LogformatterCommand extends Command {
  
  Using stdin as input
  tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -  
+ 
+ If lines are very long (or memory is limited; opposite case) line buffer can be specified
+ ./vendor/bin/typo3 logformatter --max-buffer=1000000
  
 		');
 
@@ -292,10 +297,11 @@ class LogformatterCommand extends Command {
 	protected function handleFile( string $file): void
 	{
 		$fp = fopen( $file, 'r' );
+		$maxBufferLength = (int)($this->input->getOption('max-buffer') ?? 16 * 1024);
 
 		if ( is_resource( $fp ) ) {
 			$filename = basename($file);
-			while ( $buf = fgets( $fp, 16 * 1024 ) ) {
+			while ( $buf = fgets( $fp, $maxBufferLength ) ) {
 				//echo "---".trim($buf)."---\n";
 
 				if (
