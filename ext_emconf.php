@@ -21,7 +21,7 @@ $EM_CONF['logformatter'] = [
     ],
     'autoload' => [
         'psr-4' => [
-            'SUDHAUS7\\Logformatter\\' => 'Classes',
+            'Sudhaus7\\Logformatter\\' => 'Classes',
         ]
     ],
 ];
