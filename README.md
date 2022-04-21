@@ -1,5 +1,12 @@
 # TYPO3 Logformatter
 
+[![Latest Stable Version](https://poser.pugx.org/sudhaus7/logformatter/v/stable.svg)](https://extensions.typo3.org/extension/logformatter/)
+[![TYPO3 11](https://img.shields.io/badge/TYPO3-11-orange.svg)](https://get.typo3.org/version/11)
+[![TYPO3 10](https://img.shields.io/badge/TYPO3-10-orange.svg)](https://get.typo3.org/version/10)
+[![Total Downloads](https://poser.pugx.org/sudhaus7/logformatter/d/total.svg)](https://packagist.org/packages/sudhaus7/logformatter)
+[![Monthly Downloads](https://poser.pugx.org/sudhaus7/logformatter/d/monthly)](https://packagist.org/packages/sudhaus7/logformatter)
+![PHPSTAN:Level 9](https://img.shields.io/badge/PHPStan-level%209-brightgreen.svg?style=flat])
+![build:passing](https://img.shields.io/badge/build-passing-brightgreen.svg?style=flat])
 ![Psalm coverage](https://shepherd.dev/github/sudhaus7/typo3-logformatter/coverage.svg)
 
 This extension provides a CLI tool for both the typo3 and the typo3cms tools to parse, search and format TYPO3 logfiles.
