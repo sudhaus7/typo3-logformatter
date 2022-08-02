@@ -163,7 +163,7 @@ class LogformatterCommand extends Command {
 
 		$this->addOption( 'level',null,InputOption::VALUE_REQUIRED,'show only this error level');
 
-		$this->addOption( 'max-buffer',null,InputOption::VALUE_OPTIONAL,'use this max buffer size in bytes for each line (default: 16384)');
+		$this->addOption( 'max-buffer',null,InputOption::VALUE_OPTIONAL,'use this max buffer size in bytes for each line (default: '.$this->getMaxBuffer().') - can be overridden as well with the Environment Variable LOGFORMATTER_MAX_BUFFER');
 
 		$this->addOption( 'show-meta','m',InputOption::VALUE_NONE,'Show additional information / meta information');
 		$this->addOption( 'show-stacktrace','s',InputOption::VALUE_NONE,'Show the stacktrace');
@@ -217,8 +217,8 @@ class LogformatterCommand extends Command {
  Using stdin as input
  tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -  
  
- If lines are very long (or memory is limited; opposite case) line buffer can be specified
- ./vendor/bin/typo3 logformatter --max-buffer=1000000
+ If lines are very long (or memory is limited; opposite case) the line buffer can be specified
+ ./vendor/bin/typo3 logformatter --max-buffer=1000000 or with the environment variable LOGFORMATTER_MAX_BUFFER
  
 		');
 
@@ -250,6 +250,7 @@ class LogformatterCommand extends Command {
 			$this->pager = true;
 			$this->resetTTY();
 		}
+
 
 		/** @var string[] $files */
 		$files = $input->getArgument( 'file');
@@ -297,7 +298,7 @@ class LogformatterCommand extends Command {
 	protected function handleFile( string $file): void
 	{
 		$fp = fopen( $file, 'r' );
-		$maxBufferLength = (int)($this->input->getOption('max-buffer') ?? 16 * 1024);
+		$maxBufferLength = $this->getMaxBuffer();
 
 		if ( is_resource( $fp ) ) {
 			$filename = basename($file);
@@ -435,4 +436,20 @@ class LogformatterCommand extends Command {
 		$this->lines = (int)exec('tput lines');
 	}
 
+	private function getMaxBuffer():int
+	{
+		if (isset($this->input) && $this->input instanceof InputInterface && $this->input->getOption('max-buffer')) {
+			return (int) $this->input->getOption( 'max-buffer' );
+		}
+		if (getenv('LOGFORMATTER_MAX_BUFFER')) {
+			return (int)getenv('LOGFORMATTER_MAX_BUFFER');
+		}
+		if (isset($_ENV['LOGFORMATTER_MAX_BUFFER'])) {
+			return (int)$_ENV['LOGFORMATTER_MAX_BUFFER'];
+		}
+		if (isset($_SERVER['LOGFORMATTER_MAX_BUFFER'])) {
+			return (int)$_SERVER['LOGFORMATTER_MAX_BUFFER'];
+		}
+		return 16 * 1024;
+	}
 }
