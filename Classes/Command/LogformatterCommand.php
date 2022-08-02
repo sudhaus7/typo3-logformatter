@@ -259,7 +259,6 @@ class LogformatterCommand extends Command {
 			$this->pager = false;
 			$this->handleFile( 'php://stdin' );
 		} else {
-			/** @var Finder $finder */
 			$finder = GeneralUtility::makeInstance( Finder::class);
 
 			if (empty($files)) {
@@ -383,7 +382,6 @@ class LogformatterCommand extends Command {
 					}
 
 					if (!empty($meta)) {
-						/** @var Table $table */
 						$table = GeneralUtility::makeInstance( Table::class,$this->output);
 						$table->setRows( $meta );
 						$table->render();
@@ -438,7 +436,7 @@ class LogformatterCommand extends Command {
 
 	private function getMaxBuffer():int
 	{
-		if (isset($this->input) && $this->input instanceof InputInterface && $this->input->getOption('max-buffer')) {
+		if ($this->input instanceof InputInterface && $this->input->getOption('max-buffer')) {
 			return (int) $this->input->getOption( 'max-buffer' );
 		}
 		if (getenv('LOGFORMATTER_MAX_BUFFER')) {
