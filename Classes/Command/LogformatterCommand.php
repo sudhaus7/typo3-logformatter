@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the TYPO3 project.
  *
@@ -164,49 +166,49 @@ class LogformatterCommand extends Command
 
         $this->setHelp('
  Parse, search, format and display TYPO3 Logfiles.
- 
+
  It is possible to combine parameters. By default only the logline will be shown, the meta information and stacktrace will be hidden. Keywords can be searched and the output can be filtered by request, level and component.
- 
+
  Usage:
- 
+
  This will display all logs which are located in var/logs/
  ./vendor/bin/typo3 logformatter
- 
- In this example the output will be filtered according to a certain request ID 
+
+ In this example the output will be filtered according to a certain request ID
  ./vendor/bin/typo3 logformatter --request=928d81f2d604e
- 
- In this example the output will be filtered according to a certain component 
+
+ In this example the output will be filtered according to a certain component
  ./vendor/bin/typo3 logformatter --component=TYPO3.CMS.Core.Error.ErrorHandler
- 
+
  Filtering the output by error level
  ./vendor/bin/typo3 logformatter --level=WARNING
- 
+
  Searching for a keyword, for example an Oops error code
  ./vendor/bin/typo3 logformatter --search=2021110100165236c2ab3f
- 
+
  Displaying meta information given to the log by the process (will displayed in a table)
  ./vendor/bin/typo3 logformatter --show-meta
  ./vendor/bin/typo3 logformatter -m
- 
+
  Displaying the stack-trace in an expanded, readable form (one line per stack)
  ./vendor/bin/typo3 logformatter --show-stacktrace
  ./vendor/bin/typo3 logformatter -s
- 
+
  Skipping stacks pointing to /vendor in the stacktrace to shorten it
  ./vendor/bin/typo3 logformatter --show-stacktrace --hide-vendor
- 
+
  Don\'t parse logfiles matching a certain file pattern (multiple)
  ./vendor/bin/typo3 logformatter --ignore-file-pattern="*def.log"
- 
+
  Parsing a specific file
  ./vendor/bin/typo3 logformatter var/log/typo3_0fb8cbec8e.log
- 
+
  Using stdin as input (with tail -f )
- tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -  
- 
+ tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -
+
  If lines are very long (or memory is limited; opposite case) the line buffer can be specified
  ./vendor/bin/typo3 logformatter --max-buffer=1000000 or with the environment variable LOGFORMATTER_MAX_BUFFER
- 
+
 		');
     }
 
