@@ -103,3 +103,4 @@ fabric.properties
 
 /config
 /composer.lock
+/.php-cs-fixer.cache

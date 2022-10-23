@@ -53,6 +53,8 @@
         "post-autoload-dump": [
             "mkdir -p .Build/public/typo3conf/ext/",
             "[ -L .Build/public/typo3conf/ext/logformatter ] || ln -snvf ../../../../. .Build/public/typo3conf/ext/logformatter; exit 0"
-        ]
+        ],
+		"cmscacheflush": "@php vendor/bin/typo3cms cache:flush",
+		"csfixer": "@php vendor/bin/php-cs-fixer fix"
     }
 }

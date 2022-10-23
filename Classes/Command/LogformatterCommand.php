@@ -1,10 +1,23 @@
 <?php
 
+/*
+ * This file is part of the TYPO3 project.
+ *
+ * (c) 2019-2022 Frank Berger <fberger@sudhaus7.de>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace Sudhaus7\Logformatter\Command;
 
-use Sudhaus7\Logformatter\Format\FilelinkFormat;
-use Sudhaus7\Logformatter\Interfaces\FormatInterface;
+use function array_merge;
+use function basename;
+use function is_resource;
 use Sudhaus7\Logformatter\Format\LineFormat;
+use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Sudhaus7\Logformatter\Pattern\PatternInterface;
 use Sudhaus7\Logformatter\Pattern\StacktracePattern;
 use Sudhaus7\Logformatter\Pattern\Typo3LogPattern;
@@ -15,147 +28,141 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Finder\Finder;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use function array_merge;
-use function basename;
-use function is_object;
-use function is_resource;
 
-class LogformatterCommand extends Command {
+class LogformatterCommand extends Command
+{
+    /**
+     * @var string[]
+     */
+    protected static $IGNORE_PATTERNS = [
+        'typo3_deprecations*',
+    ];
+    /**
+     * @var InputInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $input;
+    /**
+     * @var OutputInterface
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $output;
+    /**
+     * @var int
+     */
+    private $lines = 0;
+    /**
+     * @var int
+     */
+    private $cols = 0;
+    /**
+     * @var bool
+     */
+    private $pager = false;
+    /**
+     * @var int
+     */
+    private $linecounter = 0;
+    /**
+     * @var PatternInterface
+     */
+    private $pattern;
+    /**
+     * @var FormatInterface
+     */
+    private $format;
+    /**
+     * @var PatternInterface
+     */
+    private $stacktracePattern;
+    /**
+     * @var \Sudhaus7\Logformatter\Interfaces\FormatInterface
+     */
+    private $filelinkFormat;
 
-	/**
-	 * @var string[]
-	 */
-	protected static $IGNORE_PATTERNS = [
-		'typo3_deprecations*'
-	];
-	/**
-	 * @var InputInterface
-	 * @psalm-suppress PropertyNotSetInConstructor
-	 */
-	private $input;
-	/**
-	 * @var OutputInterface
-	 * @psalm-suppress PropertyNotSetInConstructor
-	 */
-	private $output;
-	/**
-	 * @var int
-	 */
-	private $lines = 0;
-	/**
-	 * @var int
-	 */
-	private $cols = 0;
-	/**
-	 * @var bool
-	 */
-	private $pager = false;
-	/**
-	 * @var int
-	 */
-	private $linecounter = 0;
-	/**
-	 * @var PatternInterface
-	 */
-	private $pattern;
-	/**
-	 * @var FormatInterface
-	 */
-	private $format;
-	/**
-	 * @var PatternInterface
-	 */
-	private $stacktracePattern;
-	/**
-	 * @var \Sudhaus7\Logformatter\Interfaces\FormatInterface
-	 */
-	private $filelinkFormat;
+    public function __construct(
+        string $name = null,
+        PatternInterface $pattern = null,
+        FormatInterface $format = null,
+        PatternInterface $stacktracePattern = null,
+        FormatInterface $filelinkFormat = null
+    ) {
+        if (!$pattern instanceof PatternInterface) {
+            /** @var PatternInterface $pattern */
+            $pattern = GeneralUtility::makeInstance(Typo3LogPattern::class);
+        }
+        if (!$format instanceof FormatInterface) {
+            /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
+            $format = GeneralUtility::makeInstance(LineFormat::class);
+        }
+        if (!$stacktracePattern instanceof PatternInterface) {
+            /** @var PatternInterface $stacktracePattern */
+            $stacktracePattern = GeneralUtility::makeInstance(StacktracePattern::class);
+        }
 
-	public function __construct(
-		string $name = null,
-		PatternInterface $pattern = null,
-		FormatInterface $format = null,
-		PatternInterface $stacktracePattern = null,
-		FormatInterface $filelinkFormat = null
-	) {
-		if (!$pattern instanceof PatternInterface) {
-			/** @var PatternInterface $pattern */
-			$pattern = GeneralUtility::makeInstance( Typo3LogPattern::class);
-		}
-		if (!$format instanceof FormatInterface) {
-			/** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
-			$format = GeneralUtility::makeInstance( LineFormat::class);
-		}
-		if (!$stacktracePattern instanceof PatternInterface) {
-			/** @var PatternInterface $stacktracePattern */
-			$stacktracePattern = GeneralUtility::makeInstance( StacktracePattern::class);
-		}
+        /**
+         * @psalm-suppress MixedArrayAccess
+         */
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
+            if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
+                /** @var string $className */
+                $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
+                if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class, class_implements($className))) {
+                    /** @var PatternInterface $stacktracePattern */
+                    $stacktracePattern = GeneralUtility::makeInstance($className);
+                }
+            }
+            if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'])) {
+                /** @var string $className */
+                $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
+                if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class, class_implements($className))) {
+                    /** @var PatternInterface $pattern */
+                    $pattern = GeneralUtility::makeInstance($className);
+                }
+            }
+        }
 
-		/**
-		 * @psalm-suppress MixedArrayAccess
-		 */
-		if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
+        $this->pattern = $pattern;
+        $this->format = $format;
+        $this->stacktracePattern = $stacktracePattern;
+        $this->filelinkFormat = $filelinkFormat;
+        parent::__construct($name);
+    }
 
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
-				/** @var string $className */
-				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
-				if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class,class_implements($className))) {
-					/** @var PatternInterface $stacktracePattern */
-					$stacktracePattern = GeneralUtility::makeInstance( $className );
-				}
-			}
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'])) {
-				/** @var string $className */
-				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
-				if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class,class_implements($className))) {
-					/** @var PatternInterface $pattern */
-					$pattern = GeneralUtility::makeInstance( $className );
-				}
-			}
-		}
+    /**
+     * @inheritDoc
+     */
+    protected function configure(): void
+    {
+        $this->setDescription('Tool to pretty print and format Logfile entries');
 
-		$this->pattern = $pattern;
-		$this->format = $format;
-		$this->stacktracePattern = $stacktracePattern;
-		$this->filelinkFormat = $filelinkFormat;
-		parent::__construct( $name );
-	}
+        $this->addArgument('file', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Filename or - for STDIN (for example in combination with tail -f');
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function configure() : void
-	{
-		$this->setDescription('Tool to pretty print and format Logfile entries');
+        $this->addOption('search', null, InputOption::VALUE_REQUIRED, 'Search in message for this keyword');
 
-		$this->addArgument('file', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Filename or - for STDIN (for example in combination with tail -f');
+        $this->addOption('request', null, InputOption::VALUE_REQUIRED, 'display only this request');
 
-		$this->addOption( 'search',null,InputOption::VALUE_REQUIRED,'Search in message for this keyword');
+        $this->addOption('component', null, InputOption::VALUE_REQUIRED, 'search within component');
 
-		$this->addOption( 'request',null,InputOption::VALUE_REQUIRED,'display only this request');
+        $this->addOption('level', null, InputOption::VALUE_REQUIRED, 'show only this error level');
 
-		$this->addOption( 'component',null,InputOption::VALUE_REQUIRED,'search within component');
+        $this->addOption('max-buffer', null, InputOption::VALUE_OPTIONAL, 'use this max buffer size in bytes for each line (default: ' . $this->getMaxBuffer() . ') - can be overridden as well with the Environment Variable LOGFORMATTER_MAX_BUFFER');
 
-		$this->addOption( 'level',null,InputOption::VALUE_REQUIRED,'show only this error level');
+        $this->addOption('show-meta', 'm', InputOption::VALUE_NONE, 'Show additional information / meta information');
+        $this->addOption('show-stacktrace', 's', InputOption::VALUE_NONE, 'Show the stacktrace');
 
-		$this->addOption( 'max-buffer',null,InputOption::VALUE_OPTIONAL,'use this max buffer size in bytes for each line (default: '.$this->getMaxBuffer().') - can be overridden as well with the Environment Variable LOGFORMATTER_MAX_BUFFER');
+        $this->addOption('hide-vendor', null, InputOption::VALUE_NONE, 'Hide vendor paths in stacktrace, implies --show-stacktrace');
 
-		$this->addOption( 'show-meta','m',InputOption::VALUE_NONE,'Show additional information / meta information');
-		$this->addOption( 'show-stacktrace','s',InputOption::VALUE_NONE,'Show the stacktrace');
+        $this->addOption('pager', null, InputOption::VALUE_NONE, '(EXPERIMENTAL) paging');
+        $this->addOption('ignore-file-pattern', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Logfile filename patterns to ignore (Default ' . implode(',', self::$IGNORE_PATTERNS) . ')');
 
-		$this->addOption( 'hide-vendor',null,InputOption::VALUE_NONE,'Hide vendor paths in stacktrace, implies --show-stacktrace');
+        // date from / to
 
-		$this->addOption( 'pager',null,InputOption::VALUE_NONE,'(EXPERIMENTAL) paging');
-		$this->addOption( 'ignore-file-pattern',null,InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,'Logfile filename patterns to ignore (Default '.implode(',',self::$IGNORE_PATTERNS).')');
-
-		// date from / to
-
-		$this->setHelp('
+        $this->setHelp('
  Parse, search, format and display TYPO3 Logfiles.
  
  It is possible to combine parameters. By default only the logline will be shown, the meta information and stacktrace will be hidden. Keywords can be searched and the output can be filtered by request, level and component.
@@ -201,233 +208,216 @@ class LogformatterCommand extends Command {
  ./vendor/bin/typo3 logformatter --max-buffer=1000000 or with the environment variable LOGFORMATTER_MAX_BUFFER
  
 		');
+    }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->input = $input;
+        $this->output = $output;
 
+        $this->format->configOutput($output);
+        $this->filelinkFormat->configOutput($output);
 
-	}
+        /**
+         * @var string[]
+         * @psalm-suppress MixedArgument
+         */
+        $ignorePatterns = array_merge($input->getOption('ignore-file-pattern'), self::$IGNORE_PATTERNS);
 
+        if ($input->getOption('pager')) {
+            $this->pager = true;
+            $this->resetTTY();
+        }
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output) : int
-	{
-		$this->input = $input;
-		$this->output = $output;
+        /** @var string[] $files */
+        $files = $input->getArgument('file');
 
-		$this->format->configOutput($output);
-		$this->filelinkFormat->configOutput($output);
+        if (in_array('-', $files)) {
+            $this->pager = false;
+            $this->handleFile('php://stdin');
+        } else {
+            $finder = GeneralUtility::makeInstance(Finder::class);
 
-		/**
-		 * @var string[]
-		 * @psalm-suppress MixedArgument
-		 */
-		$ignorePatterns = array_merge( $input->getOption( 'ignore-file-pattern'),self::$IGNORE_PATTERNS);
+            if (empty($files)) {
+                $files = [Environment::getVarPath() . '/log/*.log'];
+            }
+            foreach ($files as $file) {
+                $filename  = basename($file);
+                $directory = dirname($file);
 
-		if ($input->getOption( 'pager')) {
-			$this->pager = true;
-			$this->resetTTY();
-		}
+                $finder->name($filename);
+                $finder->notName($ignorePatterns);
 
+                /**
+                 * @psalm-suppress MixedAssignment
+                 */
+                foreach ($finder->in($directory) as $thefile) {
+                    /**
+                     * @psalm-suppress MixedMethodCall
+                     */
+                    $this->handleFile((string)$thefile->getRealPath());
+                }
+            }
+        }
+        return 0;
+    }
 
-		/** @var string[] $files */
-		$files = $input->getArgument( 'file');
+    private function resetTTY(): void
+    {
+        exec('tput clear');
+    }
 
-		if (in_array('-',$files)) {
-			$this->pager = false;
-			$this->handleFile( 'php://stdin' );
-		} else {
-			$finder = GeneralUtility::makeInstance( Finder::class);
+    /**
+     * @param string $file
+     */
+    protected function handleFile(string $file): void
+    {
+        $fp = fopen($file, 'r');
+        $maxBufferLength = $this->getMaxBuffer();
 
-			if (empty($files)) {
-				$files = [Environment::getVarPath() . '/log/*.log'];
-			}
-			foreach ($files as $file) {
+        if (is_resource($fp)) {
+            $filename = basename($file);
+            while ($buf = fgets($fp, $maxBufferLength)) {
+                //echo "---".trim($buf)."---\n";
 
-				$filename  = basename( $file );
-				$directory = dirname( $file );
+                if (
+                    $this->input->getOption('search') !== null &&
+                    stripos($buf, (string)$this->input->getOption('search')) === false
+                ) {
+                    continue;
+                }
 
-				$finder->name( $filename );
-				$finder->notName( $ignorePatterns );
+                $matches = $this->pattern->getMatches($buf);
 
-				/**
-				 * @psalm-suppress MixedAssignment
-				 */
-				foreach ( $finder->in( $directory ) as $thefile ) {
-					/**
-					 * @psalm-suppress MixedMethodCall
-					 */
-					$this->handleFile( (string) $thefile->getRealPath() );
-				}
-			}
-		}
-		return 0;
-	}
+                if (empty($matches)) {
+                    continue;
+                }
 
-	private function resetTTY() : void
-	{
-		exec('tput clear');
-	}
+                if ($this->input->getOption('request') !== null && $this->input->getOption('request') !== $matches['request']) {
+                    continue;
+                }
+                if ($this->input->getOption('component') !== null && $this->input->getOption('component') !== $matches['component']) {
+                    continue;
+                }
+                if ($this->input->getOption('level') !== null && $this->input->getOption('level') !== $matches['level']) {
+                    continue;
+                }
 
-	/**
-	 * @param string $file
-	 */
-	protected function handleFile( string $file): void
-	{
-		$fp = fopen( $file, 'r' );
-		$maxBufferLength = $this->getMaxBuffer();
+                $this->writeln($this->format->formatLine($matches, $filename));
+                $this->writeln($matches['msg']);
 
-		if ( is_resource( $fp ) ) {
-			$filename = basename($file);
-			while ( $buf = fgets( $fp, $maxBufferLength ) ) {
-				//echo "---".trim($buf)."---\n";
+                if ($this->input->getOption('show-stacktrace') || $this->input->getOption('show-meta')) {
+                    $meta = [];
+                    $stacktrace = [];
 
-				if (
-					$this->input->getOption( 'search' ) !== null &&
-					stripos( $buf, (string) $this->input->getOption( 'search' ) ) === false
-				) {
-					continue;
-				}
+                    /** @var (string|array)[] $json */
+                    $json = json_decode($matches['json'], true);
+                    if ($json) {
+                        foreach ($json as $key => $line) {
+                            if ($key === 'exception') {
+                                if ($this->input->getOption('show-stacktrace')) {
+                                    /** @var string $line */
+                                    $exceptionlines = explode("\n", $line);
+                                    foreach ($exceptionlines as $exline) {
+                                        if (substr($exline, 0, 1) === '#') {
+                                            $m = $this->stacktracePattern->getMatches($exline);
 
-				$matches = $this->pattern->getMatches( $buf);
+                                            $show = (count($m) === 5 || isset($m['index']));
+                                            if ($show && $this->input->getOption('hide-vendor')) {
+                                                $show = false;
+                                                if (strpos($m['file'], '/vendor/') === false) {
+                                                    $show = true;
+                                                }
+                                            }
+                                            if ($show) {
+                                                $stacktrace[] = $this->filelinkFormat->formatLine($m);
+                                            }
+                                        } else {
+                                            $stacktrace[] = $exline;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if ($this->input->getOption('show-meta')) {
+                                    if (is_array($line)) {
+                                        $meta[] = [$key, print_r($line, true)];
+                                    } else {
+                                        $meta[] = [$key, $line];
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-				if (empty($matches)) {
-					continue;
-				}
+                    if (!empty($meta)) {
+                        $table = GeneralUtility::makeInstance(Table::class, $this->output);
+                        $table->setRows($meta);
+                        $table->render();
+                    }
+                    if (!empty($stacktrace)) {
+                        foreach ($stacktrace as $line) {
+                            $this->writeln($line);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-				if ( $this->input->getOption( 'request' ) !== null && $this->input->getOption( 'request' ) !== $matches['request'] ) {
-					continue;
-				}
-				if ( $this->input->getOption( 'component' ) !== null && $this->input->getOption( 'component' ) !== $matches['component'] ) {
-					continue;
-				}
-				if ( $this->input->getOption( 'level' ) !== null && $this->input->getOption( 'level' ) !== $matches['level'] ) {
-					continue;
-				}
+    private function writeln(?string $line): void
+    {
+        if (empty($line)) {
+            return;
+        }
 
-				$this->writeln( $this->format->formatLine( $matches, $filename ) );
-				$this->writeln( $matches['msg'] );
+        if ($this->pager) {
+            $this->getTTY();
+            $lines = (int)ceil(strlen($line)/$this->cols);
+            if ($this->linecounter+$lines > $this->lines) {
+                $question = new Question(
+                    '<question>continue</question>',
+                    false
+                );
+                $question->setMaxAttempts(1);
+                /** @var QuestionHelper $helper */
+                $helper = $this->getHelper('question');
 
+                $answer = (string)$helper->ask($this->input, $this->output, $question);
+                if ($answer === 'q') {
+                    exit(0);
+                }
+                $this->linecounter = 0;
+            }
+            $this->linecounter = $this->linecounter+$lines;
+        }
+        $this->output->writeln($line);
+    }
 
-				if ( $this->input->getOption( 'show-stacktrace' ) || $this->input->getOption( 'show-meta' ) ) {
+    private function getTTY(): void
+    {
+        $this->cols = (int)exec('tput cols');
+        $this->lines = (int)exec('tput lines');
+    }
 
-					$meta = [];
-					$stacktrace = [];
-
-					/** @var (string|array)[] $json */
-					$json = json_decode( $matches['json'], true );
-					if ( $json ) {
-						foreach ( $json as $key => $line ) {
-							if ( $key === 'exception') {
-								if ($this->input->getOption( 'show-stacktrace' )) {
-									/** @var string $line */
-									$exceptionlines = explode( "\n", $line );
-									foreach ( $exceptionlines as $exline ) {
-										if ( substr( $exline, 0, 1 ) === '#' ) {
-
-											$m = $this->stacktracePattern->getMatches( $exline );
-
-											$show = (count( $m ) === 5 || isset($m['index']));
-											if ( $show && $this->input->getOption( 'hide-vendor' )) {
-												$show = false;
-												if ( strpos( $m['file'], '/vendor/' ) === false ) {
-													$show = true;
-												}
-											}
-											if ( $show ) {
-
-												$stacktrace[] = $this->filelinkFormat->formatLine($m);
-											}
-
-										} else {
-											$stacktrace[] = $exline;
-										}
-									}
-								}
-
-							} else {
-								if ( $this->input->getOption( 'show-meta' ) ) {
-									if (is_array($line)) {
-										$meta[] = [$key,print_r($line,true)];
-									}  else {
-										$meta[] = [$key,$line];
-									}
-
-
-								}
-							}
-						}
-					}
-
-					if (!empty($meta)) {
-						$table = GeneralUtility::makeInstance( Table::class,$this->output);
-						$table->setRows( $meta );
-						$table->render();
-					}
-					if (!empty($stacktrace)) {
-						foreach($stacktrace as $line) {
-							$this->writeln( $line);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private function writeln(?string $line) : void
-	{
-		if (empty($line)) {
-			return;
-		}
-
-		if ($this->pager) {
-			$this->getTTY();
-			$lines = (int)ceil(strlen($line)/$this->cols);
-			if ($this->linecounter+$lines > $this->lines) {
-				$question = new Question(
-					'<question>continue</question>',
-					false
-				);
-				$question->setMaxAttempts( 1 );
-				/** @var QuestionHelper $helper */
-				$helper = $this->getHelper( 'question' );
-
-				$answer = (string)$helper->ask( $this->input, $this->output, $question );
-				if ( $answer === 'q' ) {
-					exit( 0 );
-				}
-				$this->linecounter = 0;
-			}
-			$this->linecounter = $this->linecounter+$lines;
-		}
-		$this->output->writeln( $line);
-
-
-	}
-
-	private function getTTY() : void
-	{
-
-		$this->cols = (int)exec('tput cols');
-		$this->lines = (int)exec('tput lines');
-	}
-
-	private function getMaxBuffer():int
-	{
-		if ($this->input instanceof InputInterface && $this->input->getOption('max-buffer')) {
-			return (int) $this->input->getOption( 'max-buffer' );
-		}
-		if (getenv('LOGFORMATTER_MAX_BUFFER')) {
-			return (int)getenv('LOGFORMATTER_MAX_BUFFER');
-		}
-		if (isset($_ENV['LOGFORMATTER_MAX_BUFFER'])) {
-			return (int)$_ENV['LOGFORMATTER_MAX_BUFFER'];
-		}
-		if (isset($_SERVER['LOGFORMATTER_MAX_BUFFER'])) {
-			return (int)$_SERVER['LOGFORMATTER_MAX_BUFFER'];
-		}
-		return 16 * 1024;
-	}
+    private function getMaxBuffer(): int
+    {
+        if ($this->input instanceof InputInterface && $this->input->getOption('max-buffer')) {
+            return (int)$this->input->getOption('max-buffer');
+        }
+        if (getenv('LOGFORMATTER_MAX_BUFFER')) {
+            return (int)getenv('LOGFORMATTER_MAX_BUFFER');
+        }
+        if (isset($_ENV['LOGFORMATTER_MAX_BUFFER'])) {
+            return (int)$_ENV['LOGFORMATTER_MAX_BUFFER'];
+        }
+        if (isset($_SERVER['LOGFORMATTER_MAX_BUFFER'])) {
+            return (int)$_SERVER['LOGFORMATTER_MAX_BUFFER'];
+        }
+        return 16 * 1024;
+    }
 }
