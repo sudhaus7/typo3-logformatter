@@ -15,7 +15,13 @@ Parts are colored, additional information from the logger will be displayed in a
 
 ## Changelog
 
-1.2.0 Introduction of the environment variable LOGFORMATTER_MAX_BUFFER to configure the max-line-buffer (--max-buffer) 
+1.3.0
+- Introduction to the environment variables LOGFORMATTER_FILELINKFORMATTER, LOGFORMATTER_LINEFORMATTER, LOGFORMATTER_STACKTRACEPATTERN and LOGFORMATTER_LOGPATTERN
+- Refactoring the dependency injection to use factories and proper TYPO3 DI instead of messy code (thanks to Daniel Siepmann for his great blog post on this topic)
+- Clarifying usage of the STDIN option to use with tail -f
+- Codestyle cleanup
+
+1.2.0 Introduction of the environment variable LOGFORMATTER_MAX_BUFFER to configure the max-line-buffer (--max-buffer)
 
 ## Help
 
@@ -95,7 +101,7 @@ Help:
 ![Example](https://raw.githubusercontent.com/sudhaus7/typo3-logformatter/main/.github/example.png)
 
 ## Using with PHPStorm
-While PHPStorm will open the file when you click on the filename in a stacktrace, it will not jump to the line. This can be achieved by injecting a different formatter for the file-link. 
+While PHPStorm will open the file when you click on the filename in a stacktrace, it will not jump to the line. This can be achieved by injecting a different formatter for the file-link.
 
 This could be done by overriding the Services.yaml or by simply adding the following line to your AdditionalConfiguration.php
 
@@ -104,3 +110,54 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'] = \Sudh
 </pre>
 
 Now the link will contain the phpstorm:// namespace and will open the file and jump to the given line.
+
+## Using environment variables or $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'] options
+as we see in the previous example there are some configuration options and environment variables available to modify and extend the logformatter:
+
+### LOGFORMATTER_MAX_BUFFER
+
+This environment variable substitutes the parameter --max-buffer. If you have large stacktraces increase the Buffer with this variable. It accepts an integer number representing bytes to be read. If you are missing lines or stacktraces, use this variable.
+
+E.q. ```export LOGFORMATTER_MAX_BUFFER=10000000```
+
+### LOGFORMATTER_FILELINKFORMATTER
+
+This is the same as setting ```$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'] = \Sudhaus7\Logformatter\Format\PhpstormlinkFormat::class;```
+
+The notation for this variable is the dot-notation
+
+E.q. ```export LOGFORMATTER_FILELINKFORMATTER=Sudhaus7.Logformatter.Format.PhpstormlinkFormat```
+
+This will change the Linkformatter for Links in the stacktrace.
+
+### LOGFORMATTER_LINEFORMATTER
+
+This is the same as setting ```$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'] = \Sudhaus7\Logformatter\Format\LineFormat::class;```
+
+The notation for this variable is the dot-notation
+
+E.q. ```export LOGFORMATTER_FILELINKFORMATTER=Sudhaus7.Logformatter.Format.LineFormat``` (default)
+
+This specifies how a Log-line is formatted in the output.
+
+### LOGFORMATTER_LOGPATTERN
+
+This is the same as setting ```$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'] = \Sudhaus7\Logformatter\Pattern\Typo3LogPattern::class;```
+
+The notation for this variable is the dot-notation
+
+E.q. ```export LOGFORMATTER_FILELINKFORMATTER=Sudhaus7.Logformatter.Pattern.Typo3LogPattern``` (default)
+
+This specifies how a Log-line is parsed. With changing this other Logformats than the TYPO3 format could be parsed
+
+### LOGFORMATTER_LOGPATTERN
+
+This is the same as setting ```$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'] = \Sudhaus7\Logformatter\Pattern\StacktracePattern::class;```
+
+The notation for this variable is the dot-notation
+
+E.q. ```export LOGFORMATTER_FILELINKFORMATTER=Sudhaus7.Logformatter.Pattern.StacktracePattern``` (default)
+
+This specifies how a Stacktrace is parsed. With changing this other Formats than the TYPO3 format could be parsed
+
+
