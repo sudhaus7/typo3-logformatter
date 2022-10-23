@@ -30,7 +30,7 @@ class FilelinkFormatFactory
         if ($this->checkConfig('format')) {
             /** @var string $className */
             $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'];
-            if ($this->checkIfClassExistsAndImplementsInterface($className)) {
+            if ($this->checkIfClassExistsAndImplementsFormatInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
                 $format = GeneralUtility::makeInstance($className);
             }
@@ -38,7 +38,7 @@ class FilelinkFormatFactory
 
         if (getenv('LOGFORMATTER_FILELINKFORMATTER')) {
             $className = str_replace('.', '\\', getenv('LOGFORMATTER_FILELINKFORMATTER'));
-            if ($this->checkIfClassExistsAndImplementsInterface($className)) {
+            if ($this->checkIfClassExistsAndImplementsFormatInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
                 $format = GeneralUtility::makeInstance($className);
             }

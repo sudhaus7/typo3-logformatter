@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Sudhaus7\Logformatter\Traits;
 
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
+use Sudhaus7\Logformatter\Interfaces\PatternInterface;
 
 trait TestclassTrait
 {
@@ -31,9 +32,16 @@ trait TestclassTrait
         return false;
     }
 
-    public function checkIfClassExistsAndImplementsInterface($className): bool
+    public function checkIfClassExistsAndImplementsFormatInterface(string $className): bool
     {
         if (class_exists($className) && is_array(class_implements($className)) && in_array(FormatInterface::class, class_implements($className))) {
+            return true;
+        }
+        return false;
+    }
+    public function checkIfClassExistsAndImplementsPatternInterface(string $className): bool
+    {
+        if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class, class_implements($className))) {
             return true;
         }
         return false;

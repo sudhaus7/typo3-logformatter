@@ -23,11 +23,16 @@ services:
     factory:
       - '@Sudhaus7\Logformatter\Factory\StacktracePatternFactory'
       - 'get'
+  Pattern.Logpattern:
+    class: '@Sudhaus7\Logformatter\Pattern\Typo3logPattern'
+    factory:
+      - '@Sudhaus7\Logformatter\Factory\Typo3logPatternFactory'
+      - 'get'
 
   Sudhaus7\Logformatter\Command\LogformatterCommand:
     arguments:
       $name: logformatter
-      $pattern: '@Sudhaus7\Logformatter\Pattern\Typo3LogPattern'
+      $pattern: '@Pattern.Logpattern'
       $format: '@Formatter.LineFormat'
       $stacktracePattern: '@Pattern.Stacktrace'
       $filelinkFormat: '@Formatter.Linkformat'

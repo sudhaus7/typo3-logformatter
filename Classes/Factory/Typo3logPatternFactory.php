@@ -17,27 +17,28 @@ namespace Sudhaus7\Logformatter\Factory;
 
 use Sudhaus7\Logformatter\Interfaces\PatternInterface;
 use Sudhaus7\Logformatter\Pattern\StacktracePattern;
+use Sudhaus7\Logformatter\Pattern\Typo3LogPattern;
 use Sudhaus7\Logformatter\Traits\TestclassTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class StacktracePatternFactory
+class Typo3logPatternFactory
 {
     use TestclassTrait;
 
     public function get(): PatternInterface
     {
         $pattern = null;
-        if ($this->checkConfig('stacktracePattern')) {
+        if ($this->checkConfig('pattern')) {
             /** @var string $className */
-            $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
+            $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
             if ($this->checkIfClassExistsAndImplementsPatternInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\PatternInterface $pattern */
                 $pattern = GeneralUtility::makeInstance($className);
             }
         }
 
-        if (getenv('LOGFORMATTER_STACKTRACEPATTERN')) {
-            $className = str_replace('.', '\\', getenv('LOGFORMATTER_STACKTRACEPATTERN'));
+        if (getenv('LOGFORMATTER_LOGPATTERN')) {
+            $className = str_replace('.', '\\', getenv('LOGFORMATTER_LOGPATTERN'));
             if ($this->checkIfClassExistsAndImplementsPatternInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\PatternInterface $pattern */
                 $pattern = GeneralUtility::makeInstance($className);
@@ -45,7 +46,7 @@ class StacktracePatternFactory
         }
 
         if ($pattern === null) {
-            $pattern = GeneralUtility::makeInstance(StacktracePattern::class);
+            $pattern = GeneralUtility::makeInstance(Typo3LogPattern::class);
         }
         return $pattern;
     }

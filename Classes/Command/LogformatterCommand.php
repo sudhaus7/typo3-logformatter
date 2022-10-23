@@ -93,27 +93,6 @@ class LogformatterCommand extends Command
         PatternInterface $stacktracePattern = null,
         FormatInterface $filelinkFormat = null
     ) {
-        if (!$pattern instanceof PatternInterface) {
-            /** @var PatternInterface $pattern */
-            $pattern = GeneralUtility::makeInstance(Typo3LogPattern::class);
-        }
-
-
-
-        /**
-         * @psalm-suppress MixedArrayAccess
-         */
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
-
-            if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'])) {
-                /** @var string $className */
-                $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
-                if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class, class_implements($className))) {
-                    /** @var PatternInterface $pattern */
-                    $pattern = GeneralUtility::makeInstance($className);
-                }
-            }
-        }
 
         $this->pattern = $pattern;
         $this->format = $format;
