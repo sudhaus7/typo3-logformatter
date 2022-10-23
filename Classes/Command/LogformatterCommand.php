@@ -87,11 +87,11 @@ class LogformatterCommand extends Command
     private $filelinkFormat;
 
     public function __construct(
-        string $name = null,
-        PatternInterface $pattern = null,
-        FormatInterface $format = null,
-        PatternInterface $stacktracePattern = null,
-        FormatInterface $filelinkFormat = null
+        string $name,
+        PatternInterface $pattern,
+        FormatInterface $format,
+        PatternInterface $stacktracePattern,
+        FormatInterface $filelinkFormat
     ) {
 
         $this->pattern = $pattern;

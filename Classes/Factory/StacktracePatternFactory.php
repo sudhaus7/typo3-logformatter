@@ -36,8 +36,8 @@ class StacktracePatternFactory
             }
         }
 
-        if (getenv('LOGFORMATTER_STACKTRACEPATTERN')) {
-            $className = str_replace('.', '\\', getenv('LOGFORMATTER_STACKTRACEPATTERN'));
+        if (\is_string(getenv('LOGFORMATTER_STACKTRACEPATTERN'))) {
+            $className = str_replace('.', '\\', (string)getenv('LOGFORMATTER_STACKTRACEPATTERN'));
             if ($this->checkIfClassExistsAndImplementsPatternInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\PatternInterface $pattern */
                 $pattern = GeneralUtility::makeInstance($className);

@@ -36,8 +36,8 @@ class FilelinkFormatFactory
             }
         }
 
-        if (getenv('LOGFORMATTER_FILELINKFORMATTER')) {
-            $className = str_replace('.', '\\', getenv('LOGFORMATTER_FILELINKFORMATTER'));
+        if (\is_string(getenv('LOGFORMATTER_FILELINKFORMATTER'))) {
+            $className = str_replace('.', '\\', (string)getenv('LOGFORMATTER_FILELINKFORMATTER'));
             if ($this->checkIfClassExistsAndImplementsFormatInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
                 $format = GeneralUtility::makeInstance($className);

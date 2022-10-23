@@ -36,8 +36,8 @@ class LineFormatFactory
             }
         }
 
-        if (getenv('LOGFORMATTER_LINEFORMATTER')) {
-            $className = str_replace('.', '\\', getenv('LOGFORMATTER_LINEFORMATTER'));
+        if (\is_string(getenv('LOGFORMATTER_LINEFORMATTER'))) {
+            $className = str_replace('.', '\\', (string)getenv('LOGFORMATTER_LINEFORMATTER'));
             if ($this->checkIfClassExistsAndImplementsFormatInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
                 $format = GeneralUtility::makeInstance($className);

@@ -19,7 +19,7 @@ use Sudhaus7\Logformatter\Interfaces\PatternInterface;
 
 trait TestclassTrait
 {
-    public function checkConfig($keyToCheck): bool
+    public function checkConfig(string $keyToCheck): bool
     {
         /**
          * @psalm-suppress MixedArrayAccess
