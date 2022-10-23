@@ -26,7 +26,7 @@ interface FormatInterface
     /**
      * Do the actual formatting
      *
-     * @param string[] $matches matches Produced by a Sudhaus7\Logformatter\Pattern\PatternInterface
+     * @param string[] $matches matches Produced by a Sudhaus7\Logformatter\Interfaces\PatternInterface
      * @param string|null $filename Optional Filename of the Logfile
      *
      * @return string

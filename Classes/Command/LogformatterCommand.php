@@ -20,7 +20,7 @@ use function basename;
 use function is_resource;
 use Sudhaus7\Logformatter\Format\LineFormat;
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
-use Sudhaus7\Logformatter\Pattern\PatternInterface;
+use Sudhaus7\Logformatter\Interfaces\PatternInterface;
 use Sudhaus7\Logformatter\Pattern\StacktracePattern;
 use Sudhaus7\Logformatter\Pattern\Typo3LogPattern;
 use Symfony\Component\Console\Command\Command;
@@ -70,7 +70,7 @@ class LogformatterCommand extends Command
      */
     private $linecounter = 0;
     /**
-     * @var PatternInterface
+     * @var \Sudhaus7\Logformatter\Interfaces\PatternInterface
      */
     private $pattern;
     /**
@@ -78,7 +78,7 @@ class LogformatterCommand extends Command
      */
     private $format;
     /**
-     * @var PatternInterface
+     * @var \Sudhaus7\Logformatter\Interfaces\PatternInterface
      */
     private $stacktracePattern;
     /**
@@ -97,27 +97,14 @@ class LogformatterCommand extends Command
             /** @var PatternInterface $pattern */
             $pattern = GeneralUtility::makeInstance(Typo3LogPattern::class);
         }
-        if (!$format instanceof FormatInterface) {
-            /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
-            $format = GeneralUtility::makeInstance(LineFormat::class);
-        }
-        if (!$stacktracePattern instanceof PatternInterface) {
-            /** @var PatternInterface $stacktracePattern */
-            $stacktracePattern = GeneralUtility::makeInstance(StacktracePattern::class);
-        }
+
+
 
         /**
          * @psalm-suppress MixedArrayAccess
          */
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
-            if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
-                /** @var string $className */
-                $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
-                if (class_exists($className) && is_array(class_implements($className)) && in_array(PatternInterface::class, class_implements($className))) {
-                    /** @var PatternInterface $stacktracePattern */
-                    $stacktracePattern = GeneralUtility::makeInstance($className);
-                }
-            }
+
             if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'])) {
                 /** @var string $className */
                 $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];

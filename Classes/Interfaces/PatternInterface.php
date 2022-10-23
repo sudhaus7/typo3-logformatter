@@ -12,7 +12,7 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace Sudhaus7\Logformatter\Pattern;
+namespace Sudhaus7\Logformatter\Interfaces;
 
 interface PatternInterface
 {

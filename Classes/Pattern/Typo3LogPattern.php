@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Sudhaus7\Logformatter\Pattern;
 
+use Sudhaus7\Logformatter\Interfaces\PatternInterface;
+
 class Typo3LogPattern implements PatternInterface
 {
     /**
