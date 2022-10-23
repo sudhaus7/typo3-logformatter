@@ -1,6 +1,6 @@
 <?php
 
-namespace Sudhaus7\Logformatter\Format;
+namespace Sudhaus7\Logformatter\Interfaces;
 
 use Symfony\Component\Console\Output\OutputInterface;
 

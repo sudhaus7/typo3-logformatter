@@ -7,13 +7,19 @@ services:
   Sudhaus7\Logformatter\:
     resource: '../Classes/*'
 
+  Formatter.Linkformat:
+    class: '@Sudhaus7\Logformatter\Format\FilelinkFormat'
+    factory:
+      - '@Sudhaus7\Logformatter\Factory\FilelinkFormatFactory'
+      - 'get'
+
   Sudhaus7\Logformatter\Command\LogformatterCommand:
     arguments:
       $name: logformatter
       $pattern: '@Sudhaus7\Logformatter\Pattern\Typo3LogPattern'
       $format: '@Sudhaus7\Logformatter\Format\LineFormat'
       $stacktracePattern: '@Sudhaus7\Logformatter\Pattern\StacktracePattern'
-      $filelinkFormat: '@Sudhaus7\Logformatter\Format\FilelinkFormat'
+      $filelinkFormat: '@Formatter.Linkformat'
     tags:
       - name: 'console.command'
         command: 'logformatter'

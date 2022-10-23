@@ -3,7 +3,7 @@
 namespace Sudhaus7\Logformatter\Command;
 
 use Sudhaus7\Logformatter\Format\FilelinkFormat;
-use Sudhaus7\Logformatter\Format\FormatInterface;
+use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Sudhaus7\Logformatter\Format\LineFormat;
 use Sudhaus7\Logformatter\Pattern\PatternInterface;
 use Sudhaus7\Logformatter\Pattern\StacktracePattern;
@@ -72,7 +72,7 @@ class LogformatterCommand extends Command {
 	 */
 	private $stacktracePattern;
 	/**
-	 * @var FormatInterface
+	 * @var \Sudhaus7\Logformatter\Interfaces\FormatInterface
 	 */
 	private $filelinkFormat;
 
@@ -88,16 +88,12 @@ class LogformatterCommand extends Command {
 			$pattern = GeneralUtility::makeInstance( Typo3LogPattern::class);
 		}
 		if (!$format instanceof FormatInterface) {
-			/** @var FormatInterface $format */
+			/** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
 			$format = GeneralUtility::makeInstance( LineFormat::class);
 		}
 		if (!$stacktracePattern instanceof PatternInterface) {
 			/** @var PatternInterface $stacktracePattern */
 			$stacktracePattern = GeneralUtility::makeInstance( StacktracePattern::class);
-		}
-		if (!$filelinkFormat instanceof FormatInterface) {
-			/** @var FormatInterface $filelinkFormat */
-			$filelinkFormat = GeneralUtility::makeInstance( FilelinkFormat::class);
 		}
 
 		/**
@@ -113,14 +109,7 @@ class LogformatterCommand extends Command {
 					$format = GeneralUtility::makeInstance( $className );
 				}
 			}
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'])) {
-				/** @var string $className */
-				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['filelinkFormat'];
-				if (class_exists($className) && is_array(class_implements($className)) && in_array(FormatInterface::class,class_implements($className))) {
-					/** @var FormatInterface $filelinkFormat */
-					$filelinkFormat = GeneralUtility::makeInstance( $className );
-				}
-			}
+
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
 				/** @var string $className */
 				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];

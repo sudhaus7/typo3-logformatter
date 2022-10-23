@@ -2,6 +2,7 @@
 
 namespace Sudhaus7\Logformatter\Format;
 
+use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;
 

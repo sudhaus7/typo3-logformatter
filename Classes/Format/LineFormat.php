@@ -3,6 +3,7 @@
 namespace Sudhaus7\Logformatter\Format;
 
 use InvalidArgumentException;
+use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
