@@ -23,7 +23,8 @@
         "friendsoftypo3/phpstan-typo3": "^0.8.1",
         "vimeo/psalm": "^4.10",
         "typo3/cms-lowlevel": "^11.5",
-        "helhum/typo3-console": "*"
+        "helhum/typo3-console": "*",
+        "typo3/coding-standards": "^0.5.5"
     },
     "license": "MIT",
     "autoload": {

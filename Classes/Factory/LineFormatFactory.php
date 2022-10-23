@@ -2,13 +2,12 @@
 
 namespace Sudhaus7\Logformatter\Factory;
 
-use Sudhaus7\Logformatter\Format\FilelinkFormat;
-use Sudhaus7\Logformatter\Format\PhpstormlinkFormat;
+use Sudhaus7\Logformatter\Format\LineFormat;
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Sudhaus7\Logformatter\Traits\TestclassTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class FilelinkFormatFactory {
+class LineFormatFactory {
 
 	use TestclassTrait;
 
@@ -24,8 +23,8 @@ class FilelinkFormatFactory {
 			}
 		}
 
-		if (getenv('LOGFORMATTER_FILELINKFORMATTER')) {
-			$className = str_replace('.','\\',getenv('LOGFORMATTER_FILELINKFORMATTER'));
+		if (getenv('LOGFORMATTER_LINEFORMATTER')) {
+			$className = str_replace('.','\\',getenv('LOGFORMATTER_LINEFORMATTER'));
 			if($this->checkIfClassExistsAndImplementsInterface( $className)) {
 				/** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
 				$format = GeneralUtility::makeInstance( $className );
@@ -33,11 +32,8 @@ class FilelinkFormatFactory {
 		}
 
 		if ($format === null) {
-			$format = GeneralUtility::makeInstance( FilelinkFormat::class);
+			$format = GeneralUtility::makeInstance( LineFormat::class);
 		}
 		return $format;
 	}
-
-
-
 }

@@ -101,15 +101,6 @@ class LogformatterCommand extends Command {
 		 */
 		if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']) && !empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter'])) {
 
-			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'])) {
-				/** @var string $className */
-				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'];
-				if (class_exists($className) && is_array(class_implements($className)) && in_array(FormatInterface::class,class_implements($className))) {
-					/** @var FormatInterface $format */
-					$format = GeneralUtility::makeInstance( $className );
-				}
-			}
-
 			if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'])) {
 				/** @var string $className */
 				$className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
