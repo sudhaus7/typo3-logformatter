@@ -153,7 +153,7 @@ class LogformatterCommand extends Command {
 	{
 		$this->setDescription('Tool to pretty print and format Logfile entries');
 
-		$this->addArgument('file', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Filename or - for STDIN');
+		$this->addArgument('file', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Filename or - for STDIN (for example in combination with tail -f');
 
 		$this->addOption( 'search',null,InputOption::VALUE_REQUIRED,'Search in message for this keyword');
 
@@ -214,7 +214,7 @@ class LogformatterCommand extends Command {
  Parsing a specific file
  ./vendor/bin/typo3 logformatter var/log/typo3_0fb8cbec8e.log
  
- Using stdin as input
+ Using stdin as input (with tail -f )
  tail -f var/log/typo3_0fb8cbec8e.log | ./vendor/bin/typo3 logformatter -  
  
  If lines are very long (or memory is limited; opposite case) the line buffer can be specified

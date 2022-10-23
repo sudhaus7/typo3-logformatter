@@ -27,7 +27,7 @@ Usage:
   logformatter [options] [--] [<file>...]
 
 Arguments:
-  file                                             Filename or - for STDIN
+  file                                             Filename or - for STDIN (for example with tail -f)
 
 Options:
       --search=SEARCH                              Search in message for this keyword
