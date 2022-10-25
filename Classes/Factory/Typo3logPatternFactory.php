@@ -29,8 +29,10 @@ class Typo3logPatternFactory
     {
         $pattern = null;
         if ($this->checkConfig('pattern')) {
-            /** @var string $className */
-            $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
+            /**
+             * @psalm-suppress MixedArrayAccess
+             */
+            $className = (string)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['pattern'];
             if ($this->checkIfClassExistsAndImplementsPatternInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\PatternInterface $pattern */
                 $pattern = GeneralUtility::makeInstance($className);

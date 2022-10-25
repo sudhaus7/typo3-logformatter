@@ -28,8 +28,10 @@ class StacktracePatternFactory
     {
         $pattern = null;
         if ($this->checkConfig('stacktracePattern')) {
-            /** @var string $className */
-            $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
+            /**
+             * @psalm-suppress MixedArrayAccess
+             */
+            $className = (string)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['stacktracePattern'];
             if ($this->checkIfClassExistsAndImplementsPatternInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\PatternInterface $pattern */
                 $pattern = GeneralUtility::makeInstance($className);

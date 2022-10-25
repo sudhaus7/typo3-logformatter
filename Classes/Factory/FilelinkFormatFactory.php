@@ -28,8 +28,10 @@ class FilelinkFormatFactory
     {
         $format = null;
         if ($this->checkConfig('format')) {
-            /** @var string $className */
-            $className = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'];
+            /**
+             * @psalm-suppress MixedArrayAccess
+             */
+            $className = (string)$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['logformatter']['format'];
             if ($this->checkIfClassExistsAndImplementsFormatInterface($className)) {
                 /** @var \Sudhaus7\Logformatter\Interfaces\FormatInterface $format */
                 $format = GeneralUtility::makeInstance($className);
