@@ -13,9 +13,9 @@
 
 namespace Sudhaus7\Logformatter\Log\Processor;
 
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UrlProcessor extends AbstractProcessor
 {
@@ -26,15 +26,7 @@ class UrlProcessor extends AbstractProcessor
      */
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
-        $logRecord->addData(['request-url'=>(string)$this->getRequest()->getUri()]);
+        $logRecord->addData(['request-url'=> GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL')]);
         return $logRecord;
-    }
-
-    /**
-     * @return ServerRequestInterface
-     */
-    private function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
     }
 }
