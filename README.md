@@ -15,6 +15,10 @@ Parts are colored, additional information from the logger will be displayed in a
 
 ## Changelog
 
+1.4.0
+- New feature: Adding the possibility to add a log-line in the TYPO3 Log per request to log the current requests URL
+- New feature: Providing a LogProcessor to add the current request url as meta data to arbitrary logger configurations
+
 1.3.0
 - Introduction to the environment variables LOGFORMATTER_FILELINKFORMATTER, LOGFORMATTER_LINEFORMATTER, LOGFORMATTER_STACKTRACEPATTERN and LOGFORMATTER_LOGPATTERN
 - Refactoring the dependency injection to use factories and proper TYPO3 DI instead of messy code (thanks to Daniel Siepmann for his great blog post on this topic)
@@ -160,4 +164,35 @@ E.q. ```export LOGFORMATTER_FILELINKFORMATTER=Sudhaus7.Logformatter.Pattern.Stac
 
 This specifies how a Stacktrace is parsed. With changing this other Formats than the TYPO3 format could be parsed
 
+### Adding the request url to the log file in general
 
+This feature will add a log line per request containing the current request url. This gives the advantage that when you search all lines for a certain request with the --request=REQUEST option you will get the URL that produced this specific request. This is a possible way to get informations in general or when you are monitoring not specific log entries, but log entries in general
+
+To enable this feature either check the logrequesturl option in the TYPO3 backend in the extension setup under Settings -> Extension Configuration -> logformatter -> 'Enable Middleware to log the request URL per Request to the TYPO3 logfile'
+
+OR
+
+if you have the typo3cms CLI tool installed, execute the following command in your shell in your project root:
+<pre>
+./vendor/bin/typo3cms configuration:set EXTENSIONS/logformatter/logrequesturl 1
+</pre>
+
+to disable use the same command with 0 at the end:
+<pre>
+./vendor/bin/typo3cms configuration:set EXTENSIONS/logformatter/logrequesturl 0
+</pre>
+
+### Using the LogProcessor
+
+If you want to debug or monitor specific logging configurations using this log processor to add the request url to the meta information of a specific log entry might be a better way than adding the url in general as a separate log entry (previous entry).
+
+To add the LogProcessor add this for example into your AdditionConfiguration.php:
+<pre>
+$GLOBALS['TYPO3_CONF_VARS']['LOG']['EXAMPLE']['EXTENSION']['NAMESPACE']['CLASS']['processorConfiguration'] = [
+    \TYPO3\CMS\Core\Log\LogLevel::ERROR => [
+        \Sudhaus7\Logformatter\Log\Processor\UrlProcessor::class => []
+    ],
+];
+</pre>
+
+The configuration is similar to the initial writerConfiguration. See as well [the official Documantation](https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Logging/Configuration/Index.html)
