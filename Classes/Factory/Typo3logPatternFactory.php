@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the TYPO3 project.
  *
- * (c) 2019-2022 Frank Berger <fberger@sudhaus7.de>
+ * @author Frank Berger <fberger@sudhaus7.de>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Sudhaus7\Logformatter\Factory;
 
 use Sudhaus7\Logformatter\Interfaces\PatternInterface;
-use Sudhaus7\Logformatter\Pattern\StacktracePattern;
 use Sudhaus7\Logformatter\Pattern\Typo3LogPattern;
 use Sudhaus7\Logformatter\Traits\TestclassTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

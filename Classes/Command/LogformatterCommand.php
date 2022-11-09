@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the TYPO3 project.
  *
- * (c) 2019-2022 Frank Berger <fberger@sudhaus7.de>
+ * @author Frank Berger <fberger@sudhaus7.de>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -18,11 +18,8 @@ namespace Sudhaus7\Logformatter\Command;
 use function array_merge;
 use function basename;
 use function is_resource;
-use Sudhaus7\Logformatter\Format\LineFormat;
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Sudhaus7\Logformatter\Interfaces\PatternInterface;
-use Sudhaus7\Logformatter\Pattern\StacktracePattern;
-use Sudhaus7\Logformatter\Pattern\Typo3LogPattern;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
@@ -93,7 +90,6 @@ class LogformatterCommand extends Command
         PatternInterface $stacktracePattern,
         FormatInterface $filelinkFormat
     ) {
-
         $this->pattern = $pattern;
         $this->format = $format;
         $this->stacktracePattern = $stacktracePattern;
