@@ -21,6 +21,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Log\LogManagerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class LogrequesturlMiddleWare implements MiddlewareInterface, LoggerAwareInterface
@@ -31,7 +32,9 @@ class LogrequesturlMiddleWare implements MiddlewareInterface, LoggerAwareInterfa
         $config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('logformatter');
         if (isset($config['logrequesturl']) && (bool)$config['logrequesturl']) {
             $this->setLogger(GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__));
-            $this->logger->info((string)$request->getUri());
+            if ($this->logger instanceof LogManagerInterface) {
+                $this->logger->info((string)$request->getUri());
+            }
         }
         return $handler->handle($request);
     }
