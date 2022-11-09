@@ -29,7 +29,7 @@ class LogrequesturlMiddleWare implements MiddlewareInterface, LoggerAwareInterfa
     use LoggerAwareTrait;
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var array $config */
+        /** @var array<string, mixed> $config */
         $config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('logformatter');
         if (isset($config['logrequesturl']) && (bool)$config['logrequesturl']) {
             $this->setLogger(GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__));
