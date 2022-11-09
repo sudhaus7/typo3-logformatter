@@ -1,0 +1,2 @@
+# cat=basic//10; type=boolean; label= Enable Middleware to log the request URL per Request to the TYPO3 logfile
+logrequesturl = 0
