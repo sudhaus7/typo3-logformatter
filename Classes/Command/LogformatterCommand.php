@@ -382,6 +382,6 @@ class LogformatterCommand extends Command
         if (isset($_SERVER['LOGFORMATTER_MAX_BUFFER'])) {
             return (int)$_SERVER['LOGFORMATTER_MAX_BUFFER'];
         }
-        return 16 * 1024;
+        return 128 * 1024;
     }
 }
