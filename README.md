@@ -1,6 +1,7 @@
 # TYPO3 Logformatter
 
 [![Latest Stable Version](https://poser.pugx.org/sudhaus7/logformatter/v/stable.svg)](https://extensions.typo3.org/extension/logformatter/)
+[![TYPO3 11](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
 [![TYPO3 11](https://img.shields.io/badge/TYPO3-11-orange.svg)](https://get.typo3.org/version/11)
 [![TYPO3 10](https://img.shields.io/badge/TYPO3-10-orange.svg)](https://get.typo3.org/version/10)
 [![Total Downloads](https://poser.pugx.org/sudhaus7/logformatter/d/total.svg)](https://packagist.org/packages/sudhaus7/logformatter)
@@ -14,6 +15,8 @@ This extension provides a CLI tool for both the typo3 and the typo3cms tools to 
 Parts are colored, additional information from the logger will be displayed in a table, and the stacktrace is expanded for better reading. Additionally, if your Terminal supports it, the Filename in the Stacktrace can be clicked and the file opens in your editor
 
 ## Changelog
+1.5.0
+- Nothing changed, just marked for TYPO3 12 compatibility
 
 1.4.0
 - New feature: Adding the possibility to add a log-line in the TYPO3 Log per request to log the current requests URL

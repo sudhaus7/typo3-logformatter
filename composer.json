@@ -4,7 +4,7 @@
     "type": "typo3-cms-extension",
     "config": {
         "platform": {
-            "php": "7.4.20"
+            "php": "8.2.0"
         },
         "allow-plugins": {
             "typo3/cms-composer-installers": true,
@@ -12,17 +12,17 @@
         }
     },
     "require": {
-        "php": "7.2.*||7.3.*||7.4.*||8.0.*||8.1.*",
-        "typo3/cms-core": "9.5.*||10.4.*||11.5.*"
+        "php": "7.2.*||7.3.*||7.4.*||8.0.*||8.1.*||8.2.*",
+        "typo3/cms-core": "9.5.*||10.4.*||11.5.*||^12.0"
     },
     "require-dev": {
-        "typo3/cms-backend": "^11.5",
-        "typo3/cms-frontend": "^11.5",
-        "typo3/cms-tstemplate": "^11.5",
-        "typo3/cms-install": "^11.5",
-        "friendsoftypo3/phpstan-typo3": "^0.8.1",
+        "typo3/cms-backend": "^12.0",
+        "typo3/cms-frontend": "^12.0",
+        "typo3/cms-tstemplate": "^12.0",
+        "typo3/cms-install": "^12.0",
+        "friendsoftypo3/phpstan-typo3": "*",
         "vimeo/psalm": "^4.10",
-        "typo3/cms-lowlevel": "^11.5",
+        "typo3/cms-lowlevel": "^12.0",
         "helhum/typo3-console": "*",
         "typo3/coding-standards": "^0.5.5"
     },
