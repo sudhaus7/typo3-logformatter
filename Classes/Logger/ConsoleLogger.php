@@ -49,7 +49,6 @@ class ConsoleLogger extends AbstractLogger
 
     public function __construct(OutputInterface $output, array $verbosityLevelMap = [], array $formatLevelMap = [])
     {
-        $this->logger = new ConsoleLogger($output);
         $this->output = $output;
         $this->verbosityLevelMap = $verbosityLevelMap + $this->verbosityLevelMap;
         $this->formatLevelMap = $formatLevelMap + $this->formatLevelMap;
