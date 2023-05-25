@@ -15,6 +15,8 @@ This extension provides a CLI tool for both the typo3 and the typo3cms tools to 
 Parts are colored, additional information from the logger will be displayed in a table, and the stacktrace is expanded for better reading. Additionally, if your Terminal supports it, the Filename in the Stacktrace can be clicked and the file opens in your editor
 
 ## Changelog
+1.5.1
+- Added ConsoleLogger Logger. This is basically a copy of the Symfony Console Logger, with the difference that all Meta Data is expanded, and no message line substitution has been made
 1.5.0
 - Nothing changed, just marked for TYPO3 12 compatibility
 
