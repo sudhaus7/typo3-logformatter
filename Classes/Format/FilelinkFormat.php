@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace Sudhaus7\Logformatter\Format;
 
-use function sprintf;
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function sprintf;
 
 class FilelinkFormat implements FormatInterface
 {
@@ -40,7 +40,5 @@ class FilelinkFormat implements FormatInterface
     /**
      * @inheritDoc
      */
-    public function configOutput(OutputInterface $output): void
-    {
-    }
+    public function configOutput(OutputInterface $output): void {}
 }

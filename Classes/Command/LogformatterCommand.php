@@ -15,9 +15,6 @@ declare(strict_types=1);
 
 namespace Sudhaus7\Logformatter\Command;
 
-use function array_merge;
-use function basename;
-use function is_resource;
 use Sudhaus7\Logformatter\Interfaces\FormatInterface;
 use Sudhaus7\Logformatter\Interfaces\PatternInterface;
 use Symfony\Component\Console\Command\Command;
@@ -31,6 +28,9 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Finder\Finder;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function basename;
+use function is_resource;
 
 class LogformatterCommand extends Command
 {
@@ -67,7 +67,7 @@ class LogformatterCommand extends Command
      */
     private $linecounter = 0;
     /**
-     * @var \Sudhaus7\Logformatter\Interfaces\PatternInterface
+     * @var PatternInterface
      */
     private $pattern;
     /**
@@ -75,11 +75,11 @@ class LogformatterCommand extends Command
      */
     private $format;
     /**
-     * @var \Sudhaus7\Logformatter\Interfaces\PatternInterface
+     * @var PatternInterface
      */
     private $stacktracePattern;
     /**
-     * @var \Sudhaus7\Logformatter\Interfaces\FormatInterface
+     * @var FormatInterface
      */
     private $filelinkFormat;
 
@@ -244,7 +244,7 @@ class LogformatterCommand extends Command
         $fp = fopen($file, 'r');
         $maxBufferLength = $this->getMaxBuffer();
 
-        if (is_resource($fp)) {
+        if ( is_resource($fp)) {
             $filename = basename($file);
             while ($buf = fgets($fp, $maxBufferLength)) {
                 //echo "---".trim($buf)."---\n";
@@ -294,7 +294,7 @@ class LogformatterCommand extends Command
                                             $show = (count($m) === 5 || isset($m['index']));
                                             if ($show && $this->input->getOption('hide-vendor')) {
                                                 $show = false;
-                                                if (strpos($m['file'], '/vendor/') === false) {
+                                                if (!str_contains($m['file'], '/vendor/')) {
                                                     $show = true;
                                                 }
                                             }
@@ -341,8 +341,8 @@ class LogformatterCommand extends Command
 
         if ($this->pager) {
             $this->getTTY();
-            $lines = (int)ceil(strlen($line)/$this->cols);
-            if ($this->linecounter+$lines > $this->lines) {
+            $lines = (int)ceil(strlen($line) / $this->cols);
+            if ($this->linecounter + $lines > $this->lines) {
                 $question = new Question(
                     '<question>continue</question>',
                     false
@@ -357,7 +357,7 @@ class LogformatterCommand extends Command
                 }
                 $this->linecounter = 0;
             }
-            $this->linecounter = $this->linecounter+$lines;
+            $this->linecounter = $this->linecounter + $lines;
         }
         $this->output->writeln($line);
     }

@@ -26,7 +26,7 @@ class UrlProcessor extends AbstractProcessor
      */
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
-        $logRecord->addData(['request-url'=> GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL')]);
+        $logRecord->addData(['request-url' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL')]);
         return $logRecord;
     }
 }

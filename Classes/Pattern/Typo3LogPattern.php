@@ -42,7 +42,7 @@ class Typo3LogPattern implements PatternInterface
                 $matches['json'] = '{}';
             }
         }
-        return  $matches;
+        return $matches;
     }
 
     /**

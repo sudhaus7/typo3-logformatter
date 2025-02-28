@@ -12,21 +12,20 @@
         }
     },
     "require": {
-        "php": "7.2.*||7.3.*||7.4.*||8.0.*||8.1.*||8.2.*||8.3.*",
-        "typo3/cms-core": "9.5.*||10.4.*||11.5.*||^12.4"
+        "php": "8.*",
+        "typo3/cms-core": "^12.4||^13.4"
     },
     "require-dev": {
-        "typo3/cms-backend": "^12.0",
-        "typo3/cms-frontend": "^12.0",
-        "typo3/cms-tstemplate": "^12.0",
-        "typo3/cms-install": "^12.0",
-        "friendsoftypo3/phpstan-typo3": "*",
-        "vimeo/psalm": "^4.10",
-        "typo3/cms-lowlevel": "^12.0",
+        "typo3/cms-backend": "^13.0",
+        "typo3/cms-frontend": "^13.0",
+        "typo3/cms-tstemplate": "^13.0",
+        "typo3/cms-install": "^13.0",
+        "phpstan/phpstan": "*",
+        "typo3/cms-lowlevel": "^13.0",
         "helhum/typo3-console": "*",
-        "typo3/coding-standards": "^0.5.5",
-        "ssch/typo3-rector": "^2.6"
-    },
+        "typo3/coding-standards": "*",
+		"ssch/typo3-rector": "^3"
+	},
     "license": "MIT",
     "autoload": {
         "psr-4": {

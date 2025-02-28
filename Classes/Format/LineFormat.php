@@ -51,17 +51,17 @@ class LineFormat implements FormatInterface
     {
         try {
             $output->getFormatter()->getStyle('component');
-        } catch (InvalidArgumentException $e) {
+        } catch ( InvalidArgumentException $e) {
             $output->getFormatter()->setStyle('component', new OutputFormatterStyle('blue', 'white'));
         }
         try {
             $output->getFormatter()->getStyle('request');
-        } catch (InvalidArgumentException $e) {
+        } catch ( InvalidArgumentException $e) {
             $output->getFormatter()->setStyle('request', new OutputFormatterStyle('black', 'white'));
         }
         try {
             $output->getFormatter()->getStyle('alertlevel');
-        } catch (InvalidArgumentException $e) {
+        } catch ( InvalidArgumentException $e) {
             $output->getFormatter()->setStyle('alertlevel', new OutputFormatterStyle('white', 'red'));
         }
     }

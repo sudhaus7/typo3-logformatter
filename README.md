@@ -1,9 +1,8 @@
 # TYPO3 Logformatter
 
 [![Latest Stable Version](https://poser.pugx.org/sudhaus7/logformatter/v/stable.svg)](https://extensions.typo3.org/extension/logformatter/)
-[![TYPO3 11](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
-[![TYPO3 11](https://img.shields.io/badge/TYPO3-11-orange.svg)](https://get.typo3.org/version/11)
-[![TYPO3 10](https://img.shields.io/badge/TYPO3-10-orange.svg)](https://get.typo3.org/version/10)
+[![TYPO3 13](https://img.shields.io/badge/TYPO3-13-orange.svg)](https://get.typo3.org/version/12)
+[![TYPO3 12](https://img.shields.io/badge/TYPO3-12-orange.svg)](https://get.typo3.org/version/12)
 [![Total Downloads](https://poser.pugx.org/sudhaus7/logformatter/d/total.svg)](https://packagist.org/packages/sudhaus7/logformatter)
 [![Monthly Downloads](https://poser.pugx.org/sudhaus7/logformatter/d/monthly)](https://packagist.org/packages/sudhaus7/logformatter)
 ![PHPSTAN:Level 9](https://img.shields.io/badge/PHPStan-level%209-brightgreen.svg?style=flat])
@@ -15,6 +14,12 @@ This extension provides a CLI tool for both the typo3 and the typo3cms tools to 
 Parts are colored, additional information from the logger will be displayed in a table, and the stacktrace is expanded for better reading. Additionally, if your Terminal supports it, the Filename in the Stacktrace can be clicked and the file opens in your editor
 
 ## Changelog
+
+1.6.0
+- made available for TYPO3 13
+- dropped support for TYPO3 9, 10 and 11
+- dropped support for PHP older than 8.0
+
 1.5.1
 - Added ConsoleLogger Logger. This is basically a copy of the Symfony Console Logger, with the difference that all Meta Data is expanded, and no message line substitution has been made
 1.5.0
