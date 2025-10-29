@@ -24,7 +24,7 @@ class FilelinkFormat implements FormatInterface
     /**
      * @inheritDoc
      */
-    public function formatLine(array $matches, string $filename = null): string
+    public function formatLine(array $matches, ?string $filename = null): string
     {
         return sprintf($this->getFormat(), $matches['index'], $matches['file'], $matches['linenumber'], $matches['msg']);
     }

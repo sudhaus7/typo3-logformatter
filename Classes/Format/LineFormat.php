@@ -30,7 +30,7 @@ class LineFormat implements FormatInterface
     /**
      * @inheritDoc
      */
-    public function formatLine(array $matches, string $filename = null): string
+    public function formatLine(array $matches, ?string $filename = null): string
     {
         $out =  sprintf($this->getFormat(), $matches['tstamp'], $matches['level'], $matches['request'], $matches['component']);
         return empty($filename) ? $out : $filename . ': ' . $out;

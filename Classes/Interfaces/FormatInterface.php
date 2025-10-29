@@ -33,7 +33,7 @@ interface FormatInterface
      *
      * @return string
      */
-    public function formatLine(array $matches, string $filename = null): string;
+    public function formatLine(array $matches, ?string $filename = null): string;
 
     /**
      * This can be used to add style marker to the Symfony's output object
