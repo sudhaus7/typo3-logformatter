@@ -27,12 +27,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class LogrequesturlMiddleWare implements MiddlewareInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    public function __construct(private readonly LogManager $logManager) {}
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var array<string, mixed> $config */
         $config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('logformatter');
         if (isset($config['logrequesturl']) && (bool)$config['logrequesturl']) {
-            $this->setLogger(GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__));
+            $this->setLogger($this->logManager->getLogger(__CLASS__));
             if ($this->logger instanceof LoggerInterface) {
                 $this->logger->info((string)$request->getUri());
             }

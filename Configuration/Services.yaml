@@ -29,6 +29,10 @@ services:
       - '@Sudhaus7\Logformatter\Factory\Typo3logPatternFactory'
       - 'get'
 
+  Sudhaus7\Logformatter\MiddleWares\LogrequesturlMiddleWare:
+    public: true
+    autowire: true
+
   Sudhaus7\Logformatter\Command\LogformatterCommand:
     arguments:
       $name: logformatter
